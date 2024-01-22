@@ -2,6 +2,7 @@ package com.example.demorestapi.events;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -93,7 +94,7 @@ public class EventControllerTests {
 
 
     @Test
-    public void createEvent_BadRequest_When_unknowning_properties() throws Exception {
+    public void createEvent_BadRequest_When_unknowing_properties() throws Exception {
         //given
         Event event = Event.builder()
                 .id(100)
@@ -124,7 +125,7 @@ public class EventControllerTests {
     }
 
     @Test
-    public void createEvent_BadReqeust_Empty_Input() throws Exception {
+    public void createEvent_BadRequest_Empty_Input() throws Exception {
         //given
         EventDto eventDto = EventDto.builder().build();
 
@@ -138,8 +139,35 @@ public class EventControllerTests {
         //then
         resultActions.andDo(print())
                 .andExpect(status().isBadRequest());
+    }
 
+    @Test
+    @DisplayName("잘못된 입력 값일 경우에 에러 발생")
+    public void createEvent_BadRequest_Wrong_Input() throws Exception {
+        //given
+        EventDto eventDto = EventDto.builder()
+                .name("Spring")
+                .description("REST API Development with Spring")
+                .beginEnrollmentDateTime(LocalDateTime.of(2024,1,10,12,0,0))
+                .closeEnrollmentDateTime(LocalDateTime.of(2024,1,1,12,0,0))
+                .beginEventDateTime(LocalDateTime.of(2024,1,2,12,0,0))
+                .endEventDateTime(LocalDateTime.of(2024,1,1,12,0,0))
+                .basePrice(3000)
+                .maxPrice(200)
+                .limitOfEnrollment(100)
+                .location("강남역 D2 스타텁 팩토리")
+                .build();
 
+        //when
+        ResultActions resultActions = mockMvc.perform(post("/api/events")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(eventDto))
+        );
+
+        //then
+        resultActions.andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
 }
