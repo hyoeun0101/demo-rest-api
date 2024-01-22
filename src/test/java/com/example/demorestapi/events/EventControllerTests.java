@@ -111,7 +111,6 @@ public class EventControllerTests {
                 .free(true)
                 .eventStatus(EventStatus.PUBLISHED)
                 .build();
-        event.setId(10);
 
         //when
         ResultActions resultActions = mockMvc.perform(post("/api/events")
@@ -122,6 +121,25 @@ public class EventControllerTests {
         //then
         resultActions.andDo(print())
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void createEvent_BadReqeust_Empty_Input() throws Exception {
+        //given
+        EventDto eventDto = EventDto.builder().build();
+
+        //when
+        ResultActions resultActions = mockMvc.perform(post("/api/events")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaTypes.HAL_JSON)
+                .content(objectMapper.writeValueAsString(eventDto))
+        );
+
+        //then
+        resultActions.andDo(print())
+                .andExpect(status().isBadRequest());
+
+
     }
 
 }

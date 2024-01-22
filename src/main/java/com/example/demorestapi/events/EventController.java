@@ -1,6 +1,8 @@
 package com.example.demorestapi.events;
 
+import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.internal.Errors;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -25,7 +27,10 @@ public class EventController {
     }
 
     @PostMapping
-    public ResponseEntity createEvent(@RequestBody EventDto eventDto) {
+    public ResponseEntity createEvent(@RequestBody @Valid EventDto eventDto, Errors errors) {
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().build();
+        }
         Event event = modelMapper.map(eventDto, Event.class);
 
         //DB에 저장
