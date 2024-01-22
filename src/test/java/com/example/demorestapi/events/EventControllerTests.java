@@ -29,7 +29,7 @@ public class EventControllerTests {
     ObjectMapper objectMapper;
 
     @Test
-    public void 이벤트_생성하기() throws Exception {
+    public void createEvent() throws Exception {
         //given
         EventDto eventDto = EventDto.builder()
                 .name("Spring")
@@ -58,7 +58,7 @@ public class EventControllerTests {
     }
 
     @Test
-    public void 입력값_제한하기() throws Exception {
+    public void restrict_Input_value() throws Exception {
         //given
         Event event = Event.builder()
                 .id(100)
@@ -93,7 +93,7 @@ public class EventControllerTests {
 
 
     @Test
-    public void 이벤트_생성하기_Bad_Request() throws Exception {
+    public void createEvent_BadRequest_When_unknowning_properties() throws Exception {
         //given
         Event event = Event.builder()
                 .id(100)
@@ -123,4 +123,5 @@ public class EventControllerTests {
         resultActions.andDo(print())
                 .andExpect(status().isBadRequest());
     }
+
 }
