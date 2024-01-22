@@ -94,6 +94,7 @@ public class EventControllerTests {
 
 
     @Test
+    @DisplayName("알 수 없는 입력 값이 있을 경우에 에러 발생")
     public void createEvent_BadRequest_When_unknowing_properties() throws Exception {
         //given
         Event event = Event.builder()
@@ -125,6 +126,7 @@ public class EventControllerTests {
     }
 
     @Test
+    @DisplayName("빈 입력 값인 경우에 에러 발생")
     public void createEvent_BadRequest_Empty_Input() throws Exception {
         //given
         EventDto eventDto = EventDto.builder().build();
@@ -142,7 +144,7 @@ public class EventControllerTests {
     }
 
     @Test
-    @DisplayName("잘못된 입력 값일 경우에 에러 발생")
+    @DisplayName("잘못된 입력 값인 경우에 에러 발생")
     public void createEvent_BadRequest_Wrong_Input() throws Exception {
         //given
         EventDto eventDto = EventDto.builder()
@@ -168,6 +170,7 @@ public class EventControllerTests {
         //then
         resultActions.andDo(print())
                 .andExpect(status().isBadRequest());
+
     }
 
 }
