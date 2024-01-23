@@ -30,6 +30,7 @@ public class EventControllerTests {
     ObjectMapper objectMapper;
 
     @Test
+    @DisplayName("정상적으로 이벤트를 생성")
     public void createEvent() throws Exception {
         //given
         EventDto eventDto = EventDto.builder()
@@ -55,7 +56,10 @@ public class EventControllerTests {
         resultActions.andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(header().exists(HttpHeaders.LOCATION))
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE,MediaTypes.HAL_JSON_VALUE));
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE,MediaTypes.HAL_JSON_VALUE))
+                .andExpect(jsonPath("offline").value(true))
+                .andExpect(jsonPath("free").value(false))
+                .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT));
     }
 
     @Test

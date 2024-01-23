@@ -39,14 +39,13 @@ public class EventController {
         }
 
         Event event = modelMapper.map(eventDto, Event.class);
+        event.update();
 
         //DB에 저장
         Event newEvent = eventRepository.save(event);
 
         URI uri = linkTo(EventController.class).slash(newEvent.getId()).toUri();
-//        URI uri = linkTo(methodOn(EventController.class).createEvent()).toUri();
 
-        ResponseEntity<Object> res = ResponseEntity.created(uri).body(event);
-        return res;
+        return ResponseEntity.created(uri).<Object>body(event);
     }
 }
