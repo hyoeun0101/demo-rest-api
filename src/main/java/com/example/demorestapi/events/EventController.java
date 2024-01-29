@@ -2,7 +2,6 @@ package com.example.demorestapi.events;
 
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +48,6 @@ public class EventController {
 
         EventResource eventResource = new EventResource(newEvent);
         eventResource.add(linkTo(EventController.class).withRel("query-events"));
-        eventResource.add(selfLinkBuilder.withSelfRel());
         eventResource.add(selfLinkBuilder.withRel("update-event"));
         return ResponseEntity.created(createdUri).<Object>body(eventResource);
     }
