@@ -2,7 +2,9 @@ package com.example.demorestapi.events;
 
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
@@ -41,11 +43,14 @@ public class EventController {
         Event event = modelMapper.map(eventDto, Event.class);
         event.update();
 
-        //DB에 저장
         Event newEvent = eventRepository.save(event);
+        WebMvcLinkBuilder selfLinkBuilder = linkTo(EventController.class).slash(newEvent.getId());
+        URI createdUri = selfLinkBuilder.toUri();
 
-        URI uri = linkTo(EventController.class).slash(newEvent.getId()).toUri();
-
-        return ResponseEntity.created(uri).<Object>body(event);
+        EventResource eventResource = new EventResource(newEvent);
+        eventResource.add(linkTo(EventController.class).withRel("query-events"));
+        eventResource.add(selfLinkBuilder.withSelfRel());
+        eventResource.add(selfLinkBuilder.withRel("update-event"));
+        return ResponseEntity.created(createdUri).<Object>body(eventResource);
     }
 }
