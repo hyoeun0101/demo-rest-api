@@ -4,3 +4,20 @@ spring:
   jackson:
     deserialization:
       fail-on-unknown-properties: true
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+  datasource:
+    driver-class-name: org.h2.Driver
+    username: eun
+    password: 1234
+    url: jdbc:h2:mem:0262cbb5-d1f8-4913-9006-00ffbab40e53
+logging:
+  level:
+    org.hibernate.sql: DEBUG
