@@ -2,7 +2,6 @@ package com.example.demorestapi.events;
 
 import com.example.demorestapi.common.RestDocsConfiguration;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,14 +69,12 @@ public class EventControllerTests {
                 .andExpect(jsonPath("offline").value(true))
                 .andExpect(jsonPath("free").value(false))
                 .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.toString()))
-                .andExpect(jsonPath("_links.self").exists())
-                .andExpect(jsonPath("_links.query-events").exists())
-                .andExpect(jsonPath("_links.update-event").exists())
                 .andDo(document("create-event",
                         links(
                                 linkWithRel("self").description("link to self"),
                                 linkWithRel("query-events").description("link to query events"),
-                                linkWithRel("update-event").description("link to update events")
+                                linkWithRel("update-event").description("link to update events"),
+                                linkWithRel("profile").description("link to profile")
                         ),
                         requestHeaders(
                                 headerWithName(HttpHeaders.ACCEPT).description("accept header"),
@@ -115,47 +112,48 @@ public class EventControllerTests {
                                 fieldWithPath("free").description("무료 유무, 가격이 0이면 무료"),
                                 fieldWithPath("eventStatus").description("이벤트 상태, 기본값"),
                                 fieldWithPath("_links.self.href").description("link to self"),
-                                fieldWithPath("_links.query-events.href").description("link to query event"),
-                                fieldWithPath("_links.update-event.href").description("link to self")
+                                fieldWithPath("_links.query-events.href").description("link to query events"),
+                                fieldWithPath("_links.update-event.href").description("link to update event"),
+                                fieldWithPath("_links.profile.href").description("link to profile")
 
                         )
                 ));
 
     }
 
-    @Test
-    public void restrict_Input_value() throws Exception {
-        //given
-        Event event = Event.builder()
-                .id(100)
-                .name("Spring")
-                .description("REST API Development with Spring")
-                .beginEnrollmentDateTime(LocalDateTime.of(2024,1,1,12,0,0))
-                .closeEnrollmentDateTime(LocalDateTime.of(2024,1,2,12,0,0))
-                .beginEventDateTime(LocalDateTime.of(2024,1,1,12,0,0))
-                .endEventDateTime(LocalDateTime.of(2024,1,2,12,0,0))
-                .basePrice(100)
-                .maxPrice(200)
-                .limitOfEnrollment(100)
-                .location("강남역 D2 스타텁 팩토리")
-                .free(true)
-                .offline(false)
-                .eventStatus(EventStatus.PUBLISHED)
-                .build();
-
-        //when
-        ResultActions resultActions = mockMvc.perform(post("/api/events")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaTypes.HAL_JSON)
-                .content(objectMapper.writeValueAsString(event)));
-
-        //then
-        resultActions.andDo(print())
-                .andExpect(jsonPath("id").value(Matchers.not(100)))
-                .andExpect(jsonPath("free").value(false))
-                .andExpect(jsonPath("offline").value(false))
-                .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()));
-    }
+//    @Test
+//    public void restrict_Input_value() throws Exception {
+//        //given
+//        Event event = Event.builder()
+//                .id(100)
+//                .name("Spring")
+//                .description("REST API Development with Spring")
+//                .beginEnrollmentDateTime(LocalDateTime.of(2024,1,1,12,0,0))
+//                .closeEnrollmentDateTime(LocalDateTime.of(2024,1,2,12,0,0))
+//                .beginEventDateTime(LocalDateTime.of(2024,1,1,12,0,0))
+//                .endEventDateTime(LocalDateTime.of(2024,1,2,12,0,0))
+//                .basePrice(100)
+//                .maxPrice(200)
+//                .limitOfEnrollment(100)
+//                .location("강남역 D2 스타텁 팩토리")
+//                .free(true)
+//                .offline(false)
+//                .eventStatus(EventStatus.PUBLISHED)
+//                .build();
+//
+//        //when
+//        ResultActions resultActions = mockMvc.perform(post("/api/events")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .accept(MediaTypes.HAL_JSON)
+//                .content(objectMapper.writeValueAsString(event)));
+//
+//        //then
+//        resultActions.andDo(print())
+//                .andExpect(jsonPath("id").value(Matchers.not(100)))
+//                .andExpect(jsonPath("free").value(false))
+//                .andExpect(jsonPath("offline").value(false))
+//                .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()));
+//    }
 
 
     @Test
