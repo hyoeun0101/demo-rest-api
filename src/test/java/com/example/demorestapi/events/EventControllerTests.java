@@ -54,6 +54,7 @@ public class EventControllerTests {
                 .basePrice(100)
                 .maxPrice(200)
                 .limitOfEnrollment(100)
+                //TODO[KHE] - 응답 시 location 한글 깨짐 현상 해결해야함.
                 .location("강남역 D2 스타텁 팩토리")
                 .build();
 
@@ -235,12 +236,11 @@ public class EventControllerTests {
         //then
         resultActions.andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[0].objectName").exists())
-                .andExpect(jsonPath("$[0].defaultMessage").exists())
-                .andExpect(jsonPath("$[0].code").exists());
-
-
+                .andExpect(jsonPath("errors[0].objectName").exists())
+                .andExpect(jsonPath("errors[0].defaultMessage").exists())
+                .andExpect(jsonPath("errors[0].code").exists())
+                .andExpect(jsonPath("_links.index").exists())
+        ;
     }
-
 
 }

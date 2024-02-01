@@ -1,5 +1,6 @@
 package com.example.demorestapi.events;
 
+import com.example.demorestapi.common.ErrorsResource;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.hateoas.Link;
@@ -31,13 +32,13 @@ public class EventController {
     }
 
     @PostMapping
-    public ResponseEntity createEvent(@RequestBody @Valid EventDto eventDto, Errors errors) {
+    public ResponseEntity<Object> createEvent(@RequestBody @Valid EventDto eventDto, Errors errors) {
         if (errors.hasErrors()) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(new ErrorsResource(errors));
         }
         eventValidator.validate(eventDto,errors);
         if (errors.hasErrors()) {
-            return ResponseEntity.badRequest().body(errors);
+            return ResponseEntity.badRequest().body(new ErrorsResource(errors));
         }
 
         Event event = modelMapper.map(eventDto, Event.class);
