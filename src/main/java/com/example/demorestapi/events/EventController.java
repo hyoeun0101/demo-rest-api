@@ -76,7 +76,31 @@ public class EventController {
         }
 
         EventResource eventResource = new EventResource(optionalEvent.get());
-        eventResource.add(Link.of("/docs/index/html").withRel("profile"));
+        eventResource.add(Link.of("/docs/index.html").withRel("profile"));
+        return ResponseEntity.ok(eventResource);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateEvent(@PathVariable Integer id, @RequestBody @Valid EventDto eventDto, Errors errors) {
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(new ErrorsResource(errors));
+        }
+
+        eventValidator.validate(eventDto, errors);
+        if (errors.hasErrors()) {
+            return ResponseEntity.badRequest().body(new ErrorsResource(errors));
+        }
+
+        Optional<Event> optionalEvent = eventRepository.findById(id);
+        if (optionalEvent.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Event event = optionalEvent.get();
+        modelMapper.map(eventDto, event);
+
+        Event existingEvent = eventRepository.save(event);
+        EventResource eventResource = new EventResource(existingEvent);
+        eventResource.add(Link.of("/docs/index.html").withRel("profile"));
         return ResponseEntity.ok(eventResource);
     }
 }
